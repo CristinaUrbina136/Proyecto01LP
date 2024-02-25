@@ -147,6 +147,7 @@ int main(){
 /*
 Cosas por hacer: 
 -El rotating caliper ( minima area rectangulo) e implementarlo
+-Donde se va a tener la informaciòn de la posicion de todas las cartas y sus puntos para el rotating
 -Poner las primeras 3 imagenes lo mas cerca posible del origen
 -Que la salida sea un script con los datos
 -Extraer los megadatos de la base
