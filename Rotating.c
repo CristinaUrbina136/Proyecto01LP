@@ -66,17 +66,17 @@ double aleatorio(double min, double max){
 */
 struct imagen* escalar(int ancho_imagen, struct imagen *imagen, double escala){
    
-    imagen->escalar->arriba_izq->coordenada_x=(-ancho_imagen/2)*escala;
-    imagen->escalar->arriba_izq->coordenada_y=(ancho_imagen/2)*escala;
+    imagen->escalar->arriba_izq->coordenada_x*=(ancho_imagen)*escala;
+    imagen->escalar->arriba_izq->coordenada_y*=(ancho_imagen)*escala;
 
-    imagen->escalar->arriba_der->coordenada_x=(ancho_imagen/2)*escala;
-    imagen->escalar->arriba_der->coordenada_y=(ancho_imagen/2)*escala;
+    imagen->escalar->arriba_der->coordenada_x*=(ancho_imagen)*escala;
+    imagen->escalar->arriba_der->coordenada_y*=(ancho_imagen)*escala;
 
-    imagen->escalar->abajo_izq->coordenada_x=(-ancho_imagen/2)*escala;
-    imagen->escalar->abajo_izq->coordenada_y=(-ancho_imagen/2)*escala;
+    imagen->escalar->abajo_izq->coordenada_x*=(ancho_imagen)*escala;
+    imagen->escalar->abajo_izq->coordenada_y*=(ancho_imagen)*escala;
 
-    imagen->escalar->abajo_der->coordenada_x=(ancho_imagen/2)*escala;
-    imagen->escalar->abajo_der->coordenada_y=(-ancho_imagen/2)*escala;
+    imagen->escalar->abajo_der->coordenada_x*=(ancho_imagen)*escala;
+    imagen->escalar->abajo_der->coordenada_y*=(-ancho_imagen)*escala;
 
     return imagen; 
 
@@ -145,20 +145,34 @@ void rotating_caliper(){
 int main(){
     srand(time(NULL)); //Semilla para inicializar el random
     struct imagen *prueba =calloc(1, sizeof(struct imagen));
+    prueba->coordenadas=calloc(1, sizeof(struct coordenadas));
+    prueba->escalar=calloc(1, sizeof(struct escala));
+    prueba->rotar=calloc(1, sizeof(struct rotacion));
+
+    prueba->escalar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
+    prueba->rotar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
     prueba->coordenadas->coordenada_x=0;
     prueba->coordenadas->coordenada_y=0;
 
-    prueba->escalar->abajo_der->coordenada_x=0;
-    prueba->escalar->abajo_der->coordenada_y=0;
+    prueba->escalar->abajo_der->coordenada_x=1;
+    prueba->escalar->abajo_der->coordenada_y=-1;
 
-    prueba->escalar->abajo_izq->coordenada_x=0;
-    prueba->escalar->abajo_izq->coordenada_y=0;
+    prueba->escalar->abajo_izq->coordenada_x=-1;
+    prueba->escalar->abajo_izq->coordenada_y=-1;
 
-    prueba->escalar->arriba_der->coordenada_x=0;
-    prueba->escalar->arriba_der->coordenada_y=0;
+    prueba->escalar->arriba_der->coordenada_x=1;
+    prueba->escalar->arriba_der->coordenada_y=1;
 
-    prueba->escalar->arriba_izq->coordenada_x=0;
-    prueba->escalar->arriba_izq->coordenada_y=0;
+    prueba->escalar->arriba_izq->coordenada_x=-1;
+    prueba->escalar->arriba_izq->coordenada_y=1;
 
     prueba->rotar->abajo_der->coordenada_x=0;
     prueba->rotar->abajo_der->coordenada_y=0;
@@ -171,6 +185,12 @@ int main(){
 
     prueba->rotar->arriba_izq->coordenada_x=0;
     prueba->rotar->arriba_izq->coordenada_y=0;
+
+    escalar(10,prueba,0.5);
+    printf("%LF, %LF",prueba->escalar->arriba_der->coordenada_x,prueba->escalar->arriba_der->coordenada_y);
+    rotar(prueba,90);
+    printf("%LF, %LF",prueba->rotar->arriba_der->coordenada_x,prueba->rotar->arriba_der->coordenada_y);
+    
 }
 
 /*
