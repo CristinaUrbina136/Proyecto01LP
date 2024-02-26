@@ -65,6 +65,7 @@ double aleatorio(double min, double max){
  * Y por ultimo almacena la multiplicacion del factor escalar por las esquinas.
 */
 struct imagen* escalar(int ancho_imagen, struct imagen *imagen, double escala){
+   
     imagen->escalar->arriba_izq->coordenada_x=(-ancho_imagen/2)*escala;
     imagen->escalar->arriba_izq->coordenada_y=(ancho_imagen/2)*escala;
 
@@ -116,6 +117,7 @@ struct imagen* rotar(struct imagen *imagen, double grado){
 *Devuelve las nuevas coordenas del punto para la imagen. 
 */
 struct imagen* trasladar(struct imagen *imagen, double direccion_x, double direccion_y){
+    
     imagen->coordenadas->coordenada_x+=direccion_x;
     imagen->coordenadas->coordenada_y+=direccion_y;
 
@@ -142,6 +144,33 @@ void rotating_caliper(){
 
 int main(){
     srand(time(NULL)); //Semilla para inicializar el random
+    struct imagen *prueba =calloc(1, sizeof(struct imagen));
+    prueba->coordenadas->coordenada_x=0;
+    prueba->coordenadas->coordenada_y=0;
+
+    prueba->escalar->abajo_der->coordenada_x=0;
+    prueba->escalar->abajo_der->coordenada_y=0;
+
+    prueba->escalar->abajo_izq->coordenada_x=0;
+    prueba->escalar->abajo_izq->coordenada_y=0;
+
+    prueba->escalar->arriba_der->coordenada_x=0;
+    prueba->escalar->arriba_der->coordenada_y=0;
+
+    prueba->escalar->arriba_izq->coordenada_x=0;
+    prueba->escalar->arriba_izq->coordenada_y=0;
+
+    prueba->rotar->abajo_der->coordenada_x=0;
+    prueba->rotar->abajo_der->coordenada_y=0;
+
+    prueba->rotar->abajo_izq->coordenada_x=0;
+    prueba->rotar->abajo_izq->coordenada_y=0;
+
+    prueba->rotar->arriba_der->coordenada_x=0;
+    prueba->rotar->arriba_der->coordenada_y=0;
+
+    prueba->rotar->arriba_izq->coordenada_x=0;
+    prueba->rotar->arriba_izq->coordenada_y=0;
 }
 
 /*
