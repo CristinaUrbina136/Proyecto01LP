@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <math.h>
 #include <time.h>
+#include <math.h>
+const double PI = 3.14159265358979323846;
 
 
 /*
@@ -28,6 +29,7 @@
  */
 struct imagen{
     struct coordenadas* coordenadas;
+    double lado;
     struct escala* escalar;
     struct rotacion* rotar;
 };
@@ -41,6 +43,7 @@ struct escala{
  };
 
 struct rotacion{
+    double grado;
     struct coordenadas* arriba_izq;
     struct coordenadas* arriba_der;
     struct coordenadas* abajo_izq;
@@ -113,7 +116,55 @@ struct imagen* rotar(struct imagen *imagen, double grado){
 
 /**
 *Funcion para mover una imagen que recibe como parametros la imagen y un vector direcciòn, 
-*(x,Y), representado como direccion_x y direccion_y.
+*(x,Y), representado como direccion_x y direcstruct imagen *prueba =calloc(1, sizeof(struct imagen));
+    prueba->coordenadas=calloc(1, sizeof(struct coordenadas));
+    prueba->escalar=calloc(1, sizeof(struct escala));
+    prueba->rotar=calloc(1, sizeof(struct rotacion));
+
+    prueba->escalar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->escalar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
+    prueba->rotar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba->rotar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
+    prueba->coordenadas->coordenada_x=0;
+    prueba->coordenadas->coordenada_y=0;
+
+    prueba->escalar->abajo_der->coordenada_x=1;
+    prueba->escalar->abajo_der->coordenada_y=-1;
+
+    prueba->escalar->abajo_izq->coordenada_x=-1;
+    prueba->escalar->abajo_izq->coordenada_y=-1;
+
+    prueba->escalar->arriba_der->coordenada_x=1;
+    prueba->escalar->arriba_der->coordenada_y=1;
+
+    prueba->escalar->arriba_izq->coordenada_x=-1;
+    prueba->escalar->arriba_izq->coordenada_y=1;
+
+    prueba->rotar->abajo_der->coordenada_x=0;
+    prueba->rotar->abajo_der->coordenada_y=0;
+
+    prueba->rotar->abajo_izq->coordenada_x=0;
+    prueba->rotar->abajo_izq->coordenada_y=0;
+
+    prueba->rotar->arriba_der->coordenada_x=0;
+    prueba->rotar->arriba_der->coordenada_y=0;
+
+    prueba->rotar->arriba_izq->coordenada_x=0;
+    prueba->rotar->arriba_izq->coordenada_y=0;
+    prueba2->rotar->abajo_izq->coordenada_x=0;
+    prueba2->rotar->abajo_izq->coordenada_y=0;
+
+    prueba2->rotar->arriba_der->coordenada_x=0;
+    prueba2->rotar->arriba_der->coordenada_y=0;
+
+    prueba2->rotar->arriba_izq->coordenada_x=0;
+    prueba2->rotar->arriba_izq->coordenada_y=0;cion_y.
 *Devuelve las nuevas coordenas del punto para la imagen. 
 */
 struct imagen* trasladar(struct imagen *imagen, double direccion_x, double direccion_y){
@@ -134,6 +185,86 @@ struct imagen* trasladar(struct imagen *imagen, double direccion_x, double direc
     imagen->escalar->abajo_der->coordenada_y+=direccion_y;
     
     return imagen; 
+}
+
+//Corregir una vez que cambie el struct de las coordenadas
+double distancia_puntos(struct imagen* imagen1, struct imagen* imagen2){
+    double distancia;
+    distancia= sqrt(pow((imagen1->coordenadas->coordenada_x - imagen2->coordenadas->coordenada_x), 2) + pow((imagen1->coordenadas->coordenada_y - imagen2->coordenadas->coordenada_y), 2));
+    
+    return distancia;
+}
+
+/**
+ * Ocupo que el angulo sea entre 0 y 45 grados, para saber si el angulo es mayor o menor a la diagonal
+*/
+double angulo(struct imagen* imagen1, struct imagen* imagen2){
+    double pendiente=((imagen2->coordenadas->coordenada_y - imagen1->coordenadas->coordenada_y) / (imagen2->coordenadas->coordenada_x - imagen1->coordenadas->coordenada_x));
+    // Calcular el ángulo de inclinación en radianes usando atan2
+    double angulo = atan2(pendiente, 1); // La segunda entrada (1) representa el eje x
+
+    // Convertir el ángulo a grados
+    double angulo_en_grados = angulo * 180.0 / PI;
+
+    while (angulo_en_grados>=45 || angulo <=0)
+    {
+        angulo_en_grados=fabs(90-angulo_en_grados);
+    }
+    
+        // Imprimir el resultado
+    //printf("El ángulo de inclinación es: %.2f radianes\n", angulo);
+    printf("El ángulo de inclinación es: %.2f grados\n", angulo_en_grados);
+
+
+    return angulo_en_grados;
+}
+
+
+/**
+ * Al momento de rotar la imagen cambia el angulo, por ende se tiene que sumar el angulo
+ * de la nueva rotacion.
+*/
+
+double obtener_distancia_diagonal(struct imagen* imagen, double angulo){
+    double diagonal;
+    diagonal = (imagen->lado)/(2*cos(angulo));
+    return diagonal;
+}
+
+/**
+ * Funcion que verifica que las imagenes no choquen, modifica el angulo de cada 
+ * imagen individualmente para tener en cuenta la rotacion que tiene cada imagen. Si 
+ * la suma de las dos diagonales de las imagenes son menores que la distancia entre ambs puntos
+ * no chocan, pero en caso contrario signfica que lo hacen.
+ * */
+int colision_imagen(struct imagen* imagen1, struct imagen* imagen2){
+    int ang=angulo(imagen1,imagen2); //Angulo de la pendiente de ambas imagenes
+    
+    int angulo_rotado1=ang+imagen1->rotar->grado; //Angulo con la rotacion de la imagen 1
+    while (angulo_rotado1>=45 || angulo_rotado1 <=0)
+    {
+        angulo_rotado1=fabs(90-angulo_rotado1);
+    }
+
+    double diagonal1=obtener_distancia_diagonal(imagen1,ang); //Angulo con la rotacin de la imagen 2
+    int angulo_rotado2=ang+imagen2->rotar->grado;
+    while (angulo_rotado2>=45 || angulo_rotado2 <=0)
+    {
+        angulo_rotado2=fabs(90-angulo_rotado2);
+    }
+
+    double diagonal2=obtener_distancia_diagonal(imagen2,ang);
+    double suma_diagonales = diagonal1 + diagonal2;
+    double distancia = distancia_puntos(imagen1, imagen2);
+
+    if(suma_diagonales<distancia){
+        return 0; //No choca
+    }
+    else if (suma_diagonales>distancia)
+    {
+        return 1; //Choca
+    }
+    
 }
 
 void rotating_caliper(){
@@ -186,10 +317,50 @@ int main(){
     prueba->rotar->arriba_izq->coordenada_x=0;
     prueba->rotar->arriba_izq->coordenada_y=0;
 
-    escalar(10,prueba,0.5);
-    printf("%LF, %LF",prueba->escalar->arriba_der->coordenada_x,prueba->escalar->arriba_der->coordenada_y);
-    rotar(prueba,90);
-    printf("%LF, %LF",prueba->rotar->arriba_der->coordenada_x,prueba->rotar->arriba_der->coordenada_y);
+
+
+
+    struct imagen *prueba2 =calloc(1, sizeof(struct imagen));
+    prueba2->coordenadas=calloc(1, sizeof(struct coordenadas));
+    prueba2->escalar=calloc(1, sizeof(struct escala));
+    prueba2->rotar=calloc(1, sizeof(struct rotacion));
+
+    prueba2->escalar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba2->escalar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba2->escalar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba2->escalar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
+    prueba2->rotar->arriba_izq = calloc(1, sizeof(struct coordenadas));
+    prueba2->rotar->arriba_der = calloc(1, sizeof(struct coordenadas));
+    prueba2->rotar->abajo_izq = calloc(1, sizeof(struct coordenadas));
+    prueba2->rotar->abajo_der = calloc(1, sizeof(struct coordenadas));
+
+    prueba2->coordenadas->coordenada_x=7;
+    prueba2->coordenadas->coordenada_y=7;
+
+    prueba2->escalar->abajo_der->coordenada_x=1;
+    prueba2->escalar->abajo_der->coordenada_y=-1;
+
+    prueba2->escalar->abajo_izq->coordenada_x=-1;
+    prueba2->escalar->abajo_izq->coordenada_y=-1;
+
+    prueba2->escalar->arriba_der->coordenada_x=1;
+    prueba2->escalar->arriba_der->coordenada_y=1;
+
+    prueba2->escalar->arriba_izq->coordenada_x=-1;
+    prueba2->escalar->arriba_izq->coordenada_y=1;
+
+    prueba2->rotar->abajo_der->coordenada_x=0;
+    prueba2->rotar->abajo_der->coordenada_y=0;
+    
+    double distancia;
+    distancia=angulo(prueba,prueba2);
+    
+    
+    //escalar(10,prueba,0.5);
+    //printf("%LF, %LF",prueba->escalar->arriba_der->coordenada_x,prueba->escalar->arriba_der->coordenada_y);
+    //rotar(prueba,90);
+    //printf("%LF, %LF",prueba->rotar->arriba_der->coordenada_x,prueba->rotar->arriba_der->coordenada_y);
     
 }
 
@@ -202,5 +373,5 @@ Cosas por hacer:
 -Extraer los megadatos de la base
 -Calcular que abarque el 75% de la carta
 -Girar la carta entre 0 y 359 grados. (Creo que se puede hacer usando un for con el rotar actual)
-
+-IDEA: Hacerlo con angulos complementarios para encajar la 2 imagen de manera màs eficiente
 */
