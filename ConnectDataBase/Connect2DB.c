@@ -1,11 +1,12 @@
 #include <mysql.h>
 #include <stdio.h>
-/* //Esto funciona solo lo comente para hacer otro main
+//Esto funciona solo lo comente para hacer otro main
+/*
 int main() {
     MYSQL *conn;
     MYSQL_RES *res;
     MYSQL_ROW row;
-    char *server = "localhost";
+    char *server = "localhost"; // La IP cuando se suba a la nube
     char *user = "fish";
     char *password = "08112001";
     char *database = "p1";
@@ -33,5 +34,4 @@ int main() {
     //close connection
     mysql_free_result(res);
     mysql_close(conn);
-}
-*/
+}*/
