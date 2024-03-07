@@ -114,59 +114,7 @@ struct imagen* rotar(struct imagen *imagen, double grado){
 
 
 
-/**
-*Funcion para mover una imagen que recibe como parametros la imagen y un vector direcciòn, 
-*(x,Y), representado como direccion_x y direcstruct imagen *prueba =calloc(1, sizeof(struct imagen));
-    prueba->coordenadas=calloc(1, sizeof(struct coordenadas));
-    prueba->escalar=calloc(1, sizeof(struct escala));
-    prueba->rotar=calloc(1, sizeof(struct rotacion));
 
-    prueba->escalar->arriba_izq = calloc(1, sizeof(struct coordenadas));
-    prueba->escalar->arriba_der = calloc(1, sizeof(struct coordenadas));
-    prueba->escalar->abajo_izq = calloc(1, sizeof(struct coordenadas));
-    prueba->escalar->abajo_der = calloc(1, sizeof(struct coordenadas));
-
-    prueba->rotar->arriba_izq = calloc(1, sizeof(struct coordenadas));
-    prueba->rotar->arriba_der = calloc(1, sizeof(struct coordenadas));
-    prueba->rotar->abajo_izq = calloc(1, sizeof(struct coordenadas));
-    prueba->rotar->abajo_der = calloc(1, sizeof(struct coordenadas));
-
-    prueba->coordenadas->coordenada_x=0;
-    prueba->coordenadas->coordenada_y=0;
-
-    prueba->escalar->abajo_der->coordenada_x=1;
-    prueba->escalar->abajo_der->coordenada_y=-1;
-
-    prueba->escalar->abajo_izq->coordenada_x=-1;
-    prueba->escalar->abajo_izq->coordenada_y=-1;
-
-    prueba->escalar->arriba_der->coordenada_x=1;
-    prueba->escalar->arriba_der->coordenada_y=1;
-
-    prueba->escalar->arriba_izq->coordenada_x=-1;
-    prueba->escalar->arriba_izq->coordenada_y=1;
-
-    prueba->rotar->abajo_der->coordenada_x=0;
-    prueba->rotar->abajo_der->coordenada_y=0;
-
-    prueba->rotar->abajo_izq->coordenada_x=0;
-    prueba->rotar->abajo_izq->coordenada_y=0;
-
-    prueba->rotar->arriba_der->coordenada_x=0;
-    prueba->rotar->arriba_der->coordenada_y=0;
-
-    prueba->rotar->arriba_izq->coordenada_x=0;
-    prueba->rotar->arriba_izq->coordenada_y=0;
-    prueba2->rotar->abajo_izq->coordenada_x=0;
-    prueba2->rotar->abajo_izq->coordenada_y=0;
-
-    prueba2->rotar->arriba_der->coordenada_x=0;
-    prueba2->rotar->arriba_der->coordenada_y=0;
-
-    prueba2->rotar->arriba_izq->coordenada_x=0;
-    prueba2->rotar->arriba_izq->coordenada_y=0;cion_y.
-*Devuelve las nuevas coordenas del punto para la imagen. 
-*/
 struct imagen* trasladar(struct imagen *imagen, double direccion_x, double direccion_y){
     
     imagen->coordenadas->coordenada_x+=direccion_x;
@@ -267,6 +215,64 @@ int colision_imagen(struct imagen* imagen1, struct imagen* imagen2){
     
 }
 
+
+/**
+ * Función para crear una matriz de tamaño 450x450(Para que alcancen 9 imagenes de 150x150) 
+ * e inicializarla con todo en 0.
+ * Acà se van a guardar donde estan las imagenes.
+ * */ 
+int** crearMatriz() {
+    int filas = 450;
+    int columnas = 450;
+    int valorInicial = 0;
+    int **matriz = (int** )malloc(filas * sizeof(int *));
+    if (matriz == NULL) {
+        fprintf(stderr, "Error: No se pudo asignar memoria para la matriz\n");
+        exit(1);
+    }
+    for (int i = 0; i < filas; i++) {
+        matriz[i] = (int *)malloc(columnas * sizeof(int));
+        if (matriz[i] == NULL) {
+            fprintf(stderr, "Error: No se pudo asignar memoria para la fila %d\n", i);
+            exit(1);
+        }
+        for (int j = 0; j < columnas; j++) {
+            matriz[i][j] = valorInicial;
+        }
+    }
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+    return matriz;
+}
+
+// Función para imprimir una matriz de tamaño filas x columnas (No termina de funcar)
+void imprimirMatriz(int **matriz) {
+    int filas = 450;
+    int columnas = 450;
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Función para liberar la memoria de la matriz
+void liberarMatriz(int **matriz) {
+    int filas = 450;
+    for (int i = 0; i < filas; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+}
+
+
+
+
 void rotating_caliper(){
 
 }
@@ -354,7 +360,9 @@ int main(){
     prueba2->rotar->abajo_der->coordenada_y=0;
     
     double distancia;
-    distancia=angulo(prueba,prueba2);
+    crearMatriz();
+
+    //distancia=angulo(prueba,prueba2);
     
     
     //escalar(10,prueba,0.5);
@@ -370,8 +378,7 @@ Cosas por hacer:
 -Donde se va a tener la informaciòn de la posicion de todas las cartas y sus puntos para el rotating
 -Poner las primeras 3 imagenes lo mas cerca posible del origen
 -Que la salida sea un script con los datos
--Extraer los megadatos de la base
--Calcular que abarque el 75% de la carta
--Girar la carta entre 0 y 359 grados. (Creo que se puede hacer usando un for con el rotar actual)
+-Extraer los megadatos de la base ->EN PROCESO
+-Calcular que abarque el 75% de la carta 
 -IDEA: Hacerlo con angulos complementarios para encajar la 2 imagen de manera màs eficiente
 */
