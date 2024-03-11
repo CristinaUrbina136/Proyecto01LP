@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-const int r = 5;                            // Number of images per card and Number of times an image appears in the whole game
-const int N = (r * r) - r + 1;              // Total of cards and Total of images
+const int r = 5;                            // Number of images per card AND Number of times an image appears in the whole game
+const int N = (r * r) - r + 1;              // Total of cards AND Total of images
 const int bytes = (N / 8) + (N % 8 > 0);    // Number of bytes needed to save all the data
 
 typedef struct {
@@ -38,12 +38,14 @@ void turnOnBitAux(ByteArray b, int bit) {
     b.data[slot] |= (1U << shift);
 }
 
+/*
 // Turns a bit into 0
 void turnOffBitAux(ByteArray b, int bit) {
     const int slot = bit / 8;
     const int shift = bit % 8;
     b.data[slot] &= ~(1U << shift);
 }
+ */
 
 // Check the value of a bit
 bool isOnBitAux(ByteArray b, int bit) {
@@ -62,6 +64,7 @@ int last1Aux(ByteArray b) {     // There has to be a way to do it in O(1)!!!
     return -1;
 }
 
+/*
 // Returns the id of the first 0 in the array
 int first0Aux(ByteArray b) {
     for (int id = 0; id < b.size; id++) {
@@ -84,7 +87,9 @@ int countBitsAux(ByteArray b) {
     }
     return count;
 }
+ */
 
+// This is added because (![1 & 0] = 1), so I need to check this before
 bool has0Aux(ByteArray b) {
     for (int slot = 0; slot < b.size; slot++) {
         if (b.data[slot] ^ 0b11111111) {
@@ -94,12 +99,28 @@ bool has0Aux(ByteArray b) {
     return false;
 }
 
+// Set all bits to 0 -> (1 & 0 = 0)
 void setAllTo0Aux(ByteArray b) {
     for (int slot = 0; slot < b.size; slot++) {
         b.data[slot] &= 0;
     }
 }
 
+void setTo0FromIndexAux(ByteArray b, int bit) {
+    bool first = true;
+    for (int slot = bit / 8; slot < b.size; slot++) {
+        if (first) {
+            for (int i = (bit % 8) + 1; i < 8; i++) {
+                b.data[slot] &= ~(1U << i);
+            }
+            first = false;
+        } else {
+            b.data[slot] &= 0;
+        }
+    }
+}
+
+// This helps me check if the connection is possible -> !([1 | 0] & 1 = [1 | 0]) -> [0 | 1]
 bool andCardsAux(ByteArray byteArray, ByteArray compare) {
     for (int slot = 0; slot < byteArray.size; slot++) {
         if (byteArray.data[slot] & compare.data[slot]) {
@@ -109,14 +130,14 @@ bool andCardsAux(ByteArray byteArray, ByteArray compare) {
     return false;
 }
 
-// This turns off a set of bits (1 ^ 1 = 0) ([1 | 0] ^ 0 = [1 | 0])
+// This turns off a set of bits (1 ^ 1 = 0)
 void xorCardsAux(ByteArray byteArray, ByteArray compare) {
     for (int slot = 0; slot < byteArray.size; slot++) {
         byteArray.data[slot] ^= compare.data[slot];
     }
 }
 
-// This turns on a set of bits
+// This turns on a set of bits ([1 | 0] | 1 = 1)
 void orCardsAux(ByteArray byteArray, ByteArray compare) {
     for (int slot = 0; slot < byteArray.size; slot++) {
         byteArray.data[slot] |= compare.data[slot];
@@ -125,7 +146,7 @@ void orCardsAux(ByteArray byteArray, ByteArray compare) {
 
 // Print byteArray data
 void showByteArrayAux(ByteArray b){
-    for (int i = 0; i < b.size; i++) {
+    for (int i = b.size - 1; 0 <= i; i--) {
         printf("%b | ", b.data[i]);
     }
     printf("\n");

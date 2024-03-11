@@ -30,16 +30,19 @@ void turnOnBit(Connections c, int card, int bit) {
     turnOnBitAux(c.cards[card], bit);
 }
 
+/*
 // Turns a bit into 0
 void turnOffBit(Connections c, int card, int bit) {
     turnOffBitAux(c.cards[card], bit);
 }
+ */
 
 // Check the value of a bit
 bool isOnBit(Connections c, int card, int bit) {
     return isOnBitAux(c.cards[card], bit);
 }
 
+/*
 // Returns the id of the last 1 in the array
 int last1(Connections c, int card) {
     return last1Aux(c.cards[card]);
@@ -54,25 +57,38 @@ int first0(Connections c, int card) {
 int countBits(Connections c, int card) {
     return countBitsAux(c.cards[card]);
 }
+ */
 
+// Checks if at least a bit is off
 bool has0(Connections c, int card) {
     return has0Aux(c.cards[card]);
 }
 
+// Set all the bits of a card to 0
+void setAllTo0(Connections c, int card) {
+    setAllTo0Aux(c.cards[card]);
+}
+
+void setTo0FromIndex(Connections c, int card, int bit){
+    setTo0FromIndexAux(c.cards[card], bit);
+}
+
+// Apply AND to 2 arrays
 bool andCards(Connections c, int card, ByteArray compare) {
     andCardsAux(c.cards[card], compare);
 }
 
 // Apply XOR of an array to arrays with the same id
 void xorCards(Connections connections, ByteArray compare) {
-    for (int id = 0; id < compare.size; id++) {
+    for (int id = 0; id < connections.size; id++) {
         if (isOnBitAux(compare, id)) {
             xorCardsAux(connections.cards[id], compare);
+            turnOnBit(connections, id, id);     // This is important to let the diagonal ON (1)
         }
     }
 }
 
-// This turns on a set of bits
+// Apply OR of an array to arrays with the same id
 void orCards(Connections connections, ByteArray compare) {
     for (int id = 0; id < connections.size; id++) {
         if (isOnBitAux(compare, id)) {
@@ -95,14 +111,12 @@ void showConnections(Connections c) {
 }
 
 // Free the space of Connections location
-/*
 void freeSpaceConnections(Connections *connections){
     for (int i = 0; i < connections->size; i++) {
         freeSpaceByteArray(&connections->cards[i]);
     }
     free(connections->cards);
-    free(connections);
 }
- */
+
 
 #endif //TRYCONNECTIONDB_CONNECTIONS_H
